@@ -25,26 +25,28 @@ class OpenTofuCLITest {
     private RunContextFactory runContextFactory;
 
     @Test
-    @SuppressWarnings("unchecked")
     void run() throws Exception {
-        String environmentKey = "MY_KEY";
-        String environmentValue = "MY_VALUE";
-
-        OpenTofuCLI.OpenTofuCLIBuilder<?, ?> builder = OpenTofuCLI.builder()
+        var runner = OpenTofuCLI.builder()
             .id(IdUtils.create())
             .type(OpenTofuCLI.class.getName())
-            .commands(Property.ofValue(List.of("tofu version")));
+            .commands(Property.ofValue(List.of("tofu version")))
+            .build();
 
-        OpenTofuCLI runner = builder.build();
+        var runContext = TestsUtils.mockRunContext(runContextFactory, runner, Map.of());
 
-        RunContext runContext = TestsUtils.mockRunContext(runContextFactory, runner, Map.of("environmentKey", environmentKey, "environmentValue", environmentValue));
+        ScriptOutput output = runner.run(runContext);
+        assertThat(output.getExitCode(), is(0));
+    }
 
-        ScriptOutput scriptOutput = runner.run(runContext);
-        assertThat(scriptOutput.getExitCode(), is(0));
+    @Test
+    void envRendering() throws Exception {
+        var environmentKey = "MY_KEY";
+        var environmentValue = "MY_VALUE";
 
-        runner = builder
-            .env(Map.of("{{ inputs.environmentKey }}", "{{ inputs.environmentValue }}"))
-            .beforeCommands(Property.ofValue(List.of("tofu init -input=false")))
+        var runner = OpenTofuCLI.builder()
+            .id(IdUtils.create())
+            .type(OpenTofuCLI.class.getName())
+            .env(Property.ofValue(Map.of("{{ inputs.environmentKey }}", "{{ inputs.environmentValue }}")))
             .commands(
                 Property.ofValue(
                     List.of(
@@ -56,8 +58,14 @@ class OpenTofuCLITest {
             )
             .build();
 
-        scriptOutput = runner.run(runContext);
-        assertThat(scriptOutput.getExitCode(), is(0));
-        assertThat(scriptOutput.getVars().get("customEnv"), is(environmentValue));
+        var runContext = TestsUtils.mockRunContext(
+            runContextFactory,
+            runner,
+            Map.of("environmentKey", environmentKey, "environmentValue", environmentValue)
+        );
+
+        ScriptOutput output = runner.run(runContext);
+        assertThat(output.getExitCode(), is(0));
+        assertThat(output.getVars().get("customEnv"), is(environmentValue));
     }
 }
