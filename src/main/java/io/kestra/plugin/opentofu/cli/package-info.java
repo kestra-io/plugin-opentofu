@@ -1,5 +1,5 @@
 @PluginSubGroup(
-    description = "This sub-group of plugins contains tasks for using OpenTofu.",
+    description = "Tasks that run OpenTofu CLI commands to init, plan, apply, and destroy infrastructure.",
     categories = {
         PluginSubGroup.PluginCategory.INFRASTRUCTURE
     }

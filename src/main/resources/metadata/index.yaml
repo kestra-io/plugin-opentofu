@@ -1,8 +1,8 @@
 group: io.kestra.plugin.opentofu
 name: "opentofu"
 title: "OpenTofu"
-description: "Tasks that run OpenTofu commands from Kestra."
-body: "Provide OpenTofu configuration paths, backend/env variables, and CLI arguments to init, plan, apply, or destroy infrastructure, capturing outputs and state paths for deployment pipelines."
+description: "Tasks that run OpenTofu CLI commands to init, plan, apply, and destroy infrastructure."
+body: "Run OpenTofu commands inside a container with support for input files, output files, environment variables, and remote state backends such as S3, GCS, or Terraform Cloud."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"
