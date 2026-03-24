@@ -1,4 +1,4 @@
-group: io.kestra.plugin.opentofu
+group: io.kestra.plugin.opentofu.cli
 name: "cli"
 title: "Cli"
 description: "Tasks that run OpenTofu CLI commands to init, plan, apply, and destroy infrastructure."
