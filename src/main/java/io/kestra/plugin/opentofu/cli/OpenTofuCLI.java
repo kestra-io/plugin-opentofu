@@ -32,7 +32,7 @@ import lombok.experimental.SuperBuilder;
             title = "Initialize OpenTofu, then create and apply the plan",
             full = true,
             code = """
-                id: git-opentofu
+                id: git_opentofu
                 namespace: company.team
 
                 tasks:
@@ -68,7 +68,7 @@ import lombok.experimental.SuperBuilder;
             title = "Pin OpenTofu version and run validate then plan",
             full = true,
             code = """
-                id: opentofu-plan-only
+                id: opentofu_plan_only
                 namespace: company.team
 
                 tasks:
