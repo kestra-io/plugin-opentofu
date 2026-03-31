@@ -24,7 +24,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Schema(
     title = "Run OpenTofu CLI commands in Docker",
-    description = "Executes OpenTofu commands inside the task runner container. Defaults to the `ghcr.io/opentofu/opentofu` image and assumes a remote state backend such as S3, GCS, or Terraform Cloud."
+    description = "Executes OpenTofu commands inside the task runner container. Defaults to the `ghcr.io/opentofu/opentofu` image. For production use, configure a remote state backend such as S3, GCS, or Terraform Cloud."
 )
 @Plugin(
     examples = {
@@ -32,16 +32,16 @@ import lombok.experimental.SuperBuilder;
             title = "Initialize OpenTofu, then create and apply the plan",
             full = true,
             code = """
-                id: git_opentofu
+                id: git-opentofu
                 namespace: company.team
 
                 tasks:
-                  - id: git
+                  - id: working_dir
                     type: io.kestra.plugin.core.flow.WorkingDirectory
                     tasks:
                       - id: clone_repository
                         type: io.kestra.plugin.git.Clone
-                        url: https://github.com/anna-geller/kestra-ci-cd
+                        url: https://github.com/your-org/your-repo
                         branch: main
 
                       - id: opentofu
@@ -51,7 +51,7 @@ import lombok.experimental.SuperBuilder;
                         inputFiles:
                           terraform.tfvars: |
                             username = "cicd"
-                            password  = "{{ secret('CI_CD_PASSWORD') }}"
+                            password = "{{ secret('CI_CD_PASSWORD') }}"
                             hostname = "https://demo.kestra.io"
                         outputFiles:
                           - "*.txt"
@@ -68,7 +68,7 @@ import lombok.experimental.SuperBuilder;
             title = "Pin OpenTofu version and run validate then plan",
             full = true,
             code = """
-                id: opentofu_plan_only
+                id: opentofu-plan-only
                 namespace: company.team
 
                 tasks:
@@ -77,6 +77,17 @@ import lombok.experimental.SuperBuilder;
                     containerImage: ghcr.io/opentofu/opentofu:1.9.0
                     beforeCommands:
                       - tofu init -input=false
+                    inputFiles:
+                      main.tf: |
+                        terraform {
+                          required_providers {
+                            local = { source = "hashicorp/local" }
+                          }
+                        }
+                        resource "local_file" "example" {
+                          content  = "hello"
+                          filename = "output.txt"
+                        }
                     commands:
                       - tofu validate -no-color
                       - tofu plan -input=false -no-color -out=tfplan
@@ -91,6 +102,10 @@ import lombok.experimental.SuperBuilder;
 public class OpenTofuCLI extends AbstractExecScript implements RunnableTask<ScriptOutput> {
     private static final String DEFAULT_IMAGE = "ghcr.io/opentofu/opentofu";
 
+    @Schema(
+        title = "OpenTofu Docker image",
+        description = "Defaults to `ghcr.io/opentofu/opentofu`. Pin a specific version tag for reproducible builds, e.g. `ghcr.io/opentofu/opentofu:1.9.0`."
+    )
     @Builder.Default
     protected Property<String> containerImage = Property.ofValue(DEFAULT_IMAGE);
 
