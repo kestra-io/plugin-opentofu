@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import io.kestra.core.models.annotations.PluginProperty;
 
 @SuperBuilder
 @ToString
@@ -107,6 +108,7 @@ public class OpenTofuCLI extends AbstractExecScript implements RunnableTask<Scri
         description = "Defaults to `ghcr.io/opentofu/opentofu`. Pin a specific version tag for reproducible builds, e.g. `ghcr.io/opentofu/opentofu:1.9.0`."
     )
     @Builder.Default
+    @PluginProperty(group = "execution")
     protected Property<String> containerImage = Property.ofValue(DEFAULT_IMAGE);
 
     @Schema(
@@ -114,6 +116,7 @@ public class OpenTofuCLI extends AbstractExecScript implements RunnableTask<Scri
         description = "Main commands run with `/bin/sh -c`, e.g., `tofu plan` or `tofu apply -auto-approve`."
     )
     @NotNull
+    @PluginProperty(group = "main")
     protected Property<List<String>> commands;
 
     @Override
