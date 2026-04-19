@@ -7,8 +7,9 @@
 
 ## Why
 
-- This plugin integrates Kestra with OpenToFu CLI.
-- It provides tasks that run OpenTofu CLI commands to init, plan, apply, and destroy infrastructure.
+- What user problem does this solve? Teams need to run OpenTofu CLI commands to init, plan, apply, and destroy infrastructure from orchestrated workflows instead of relying on manual console work, ad hoc scripts, or disconnected schedulers.
+- Why would a team adopt this plugin in a workflow? It keeps OpenTofu steps in the same Kestra flow as upstream preparation, approvals, retries, notifications, and downstream systems.
+- What operational/business outcome does it enable? It reduces manual handoffs and fragmented tooling while improving reliability, traceability, and delivery speed for processes that depend on OpenTofu.
 
 ## How
 
